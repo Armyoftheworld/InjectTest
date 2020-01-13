@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import com.daijun.inject.annotation.BindView
+import com.daijun.inject.annotation.Method
+import com.daijun.inject.annotation.Page
 import com.daijun.injecttool.InjectView
 
+@Page
 class MainActivity : AppCompatActivity() {
 
     @BindView(R.id.text)
@@ -16,5 +19,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         InjectView.bind(this)
         println(text.text)
+    }
+
+    @Method
+    fun textAnno(age: Int, name: String) {
+
     }
 }

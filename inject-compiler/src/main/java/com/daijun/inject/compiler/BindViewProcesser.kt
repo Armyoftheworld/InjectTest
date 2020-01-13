@@ -1,12 +1,15 @@
 package com.daijun.inject.compiler
 
 import com.daijun.inject.annotation.BindView
+import com.daijun.inject.annotation.Method
+import com.daijun.inject.annotation.Page
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.tools.Diagnostic
@@ -31,6 +34,9 @@ class BindViewProcesser: AbstractProcessor() {
     }
 
     override fun process(set: MutableSet<out TypeElement>?, roundEnvironment: RoundEnvironment?): Boolean {
+        if (roundEnvironment?.processingOver() == true) {
+            return false
+        }
         log("start process")
         val targetMap = mutableMapOf<TypeElement, MutableList<FieldViewBinding>>()
         val elements = roundEnvironment?.getElementsAnnotatedWith(BindView::class.java) ?: mutableSetOf()
@@ -85,6 +91,27 @@ class BindViewProcesser: AbstractProcessor() {
 
             file.writeTo(filer)
         }
+
+
+        val elPages =
+            roundEnvironment?.getElementsAnnotatedWith(Page::class.java) ?: mutableSetOf()
+        for (elPage in elPages) {
+            val typeElement = elPage as TypeElement
+            log("typeElement.qualifiedName = ${typeElement.qualifiedName}")
+        }
+
+        val elMethods =
+            roundEnvironment?.getElementsAnnotatedWith(Method::class.java) ?: mutableSetOf()
+        for (elMethod in elMethods) {
+            val executableElement = elMethod as ExecutableElement
+            log("executableElement.simpleName = ${executableElement.simpleName}")
+            val enclosingElement = elMethod.enclosingElement
+            val typeElement = enclosingElement as TypeElement
+            log("方法${elMethod.simpleName}在类${typeElement.qualifiedName}中")
+            for (parameter in executableElement.parameters) {
+                log("name: ${parameter.simpleName},type = ${parameter.asType().asTypeName()}")
+            }
+        }
         return false
     }
 
@@ -106,6 +133,6 @@ class BindViewProcesser: AbstractProcessor() {
     }
 
     private fun log(string: String) {
-        processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "[info] $string")
+        processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, string)
     }
 }
