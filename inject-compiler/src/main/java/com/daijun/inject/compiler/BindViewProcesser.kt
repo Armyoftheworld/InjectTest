@@ -92,6 +92,18 @@ class BindViewProcesser: AbstractProcessor() {
             file.writeTo(filer)
         }
 
+        // 创建测试的kotlin文件
+        val stringTemplete = "this log is from simplePrint:" + "$" + "msg"
+        val funSpec = FunSpec.builder("simplePrint")
+            .addParameter("msg", CharSequence::class)
+            .addStatement("println(%P)", stringTemplete)
+            .build()
+
+        FileSpec.builder("com.daijun.test", "PrintUtils")
+            .addFunction(funSpec)
+            .build()
+            .writeTo(filer)
+
 
         val elPages =
             roundEnvironment?.getElementsAnnotatedWith(Page::class.java) ?: mutableSetOf()

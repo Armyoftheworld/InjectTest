@@ -7,6 +7,7 @@ import com.daijun.inject.annotation.BindView
 import com.daijun.inject.annotation.Method
 import com.daijun.inject.annotation.Page
 import com.daijun.injecttool.InjectView
+import com.daijun.test.simplePrint
 
 @Page
 class MainActivity : AppCompatActivity() {

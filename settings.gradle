@@ -1,2 +1,2 @@
-include ':app', ':inject-annotation', ':injecttool', ':inject-compiler'
+include ':app', ':inject-annotation', ':injecttool', ':inject-compiler', ':asm-plugin'
 rootProject.name='Inject'
